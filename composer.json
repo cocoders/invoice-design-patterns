@@ -1,0 +1,25 @@
+{
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^7.2",
+        "ext-iconv": "*"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "bin-dir": "bin",
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests/"
+        }
+    }
+}
