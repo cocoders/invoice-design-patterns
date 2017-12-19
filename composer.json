@@ -21,5 +21,9 @@
         "psr-4": {
             "tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^4.2",
+        "phpunit/phpunit": "^6.5"
     }
 }
