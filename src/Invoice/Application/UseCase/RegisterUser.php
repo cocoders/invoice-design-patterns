@@ -27,10 +27,12 @@ class RegisterUser
         $this->transactionManager->begin();
 
         try {
-            $this->users->add(
-                $this->userFactory->create($command->email(), $command->password())
-            );
-
+            $user = $this->userFactory->create($command->email(), $command->password());
+            if ($this->users->has($user)) {
+                $this->transactionManager->rollback();
+                return;
+            }
+            $this->users->add($user);
             $this->transactionManager->commit();
         } catch (Throwable $exception) {
             $this->transactionManager->rollback();

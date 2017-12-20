@@ -6,10 +6,12 @@ use Exception;
 use InvalidArgumentException;
 use Invoice\Application\UseCase\RegisterUser;
 use Invoice\Application\TransactionManager;
+use Invoice\Domain\Email;
 use Invoice\Domain\Users;
 use Invoice\Domain\UserFactory;
 use Invoice\Domain\User;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 /**
  * @mixin RegisterUser
@@ -35,8 +37,31 @@ class RegisterUserSpec extends ObjectBehavior
             'leszek.prabucki@gmail.com',
             'password'
         )->willReturn($user);
+        $users->has($user)->willReturn(false);
         $users->add($user)->shouldBeCalled();
         $transactionManager->commit()->shouldBeCalled();
+
+        $this->execute(new RegisterUser\Command(
+            'leszek.prabucki@gmail.com',
+            'password'
+        ));
+    }
+
+    function it_does_not_allows_to_create_user_if_user_which_such_email_already_exists_in_storage(
+        TransactionManager $transactionManager,
+        UserFactory $userFactory,
+        User $user,
+        Users $users
+    ) {
+        $transactionManager->begin()->shouldBeCalled();
+        $userFactory->create(
+            'leszek.prabucki@gmail.com',
+            'password'
+        )->willReturn($user);
+        $users->has($user)->willReturn(true);
+        $users->add($user)->shouldNotBeCalled();
+        $transactionManager->commit()->shouldNotBeCalled();
+        $transactionManager->rollback()->shouldBeCalled();
 
         $this->execute(new RegisterUser\Command(
             'leszek.prabucki@gmail.com',
@@ -73,6 +98,7 @@ class RegisterUserSpec extends ObjectBehavior
             'leszek.prabucki@gmail.com',
             'password'
         )->willReturn($user);
+        $users->has($user)->willReturn(false);
         $users->add($user)->willThrow(new InvalidArgumentException());
         $transactionManager->commit()->shouldNotBeCalled();
         $transactionManager->rollback()->shouldBeCalled();
@@ -94,6 +120,7 @@ class RegisterUserSpec extends ObjectBehavior
             'leszek.prabucki@gmail.com',
             'password'
         )->willReturn($user);
+        $users->has($user)->willReturn(false);
         $users->add($user)->shouldBeCalled();
         $transactionManager->commit()->willThrow(new Exception());
         $transactionManager->rollback()->shouldBeCalled();
