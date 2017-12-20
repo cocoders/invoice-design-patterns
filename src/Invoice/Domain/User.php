@@ -9,7 +9,7 @@ class User
     private $email;
     private $passwordHash;
 
-    public function __construct(Email $email, string $passwordHash)
+    public function __construct(Email $email, PasswordHash $passwordHash)
     {
         $this->email = $email;
         $this->passwordHash = $passwordHash;
@@ -20,7 +20,7 @@ class User
         return $this->email;
     }
 
-    public function password(): string
+    public function password(): PasswordHash
     {
         return $this->passwordHash;
     }

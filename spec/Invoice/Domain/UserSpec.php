@@ -4,6 +4,7 @@ namespace spec\Invoice\Domain;
 
 use Invoice\Domain\User;
 use Invoice\Domain\Email;
+use Invoice\Domain\PasswordHash;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -12,17 +13,14 @@ use Prophecy\Argument;
  */
 class UserSpec extends ObjectBehavior
 {
-    function it_is_initializable(Email $email)
+    function it_is_initializable(Email $email, PasswordHash $hash)
     {
-        $hash = password_hash('password', PASSWORD_BCRYPT);
         $this->beConstructedWith(
             $email,
             $hash
-        ); // $user = new User('leszek.prabucki@gmail.com', 'password');
+        );
 
         $this->email()->shouldBe($email);
-        // self::assertEquals('leszek.prabucki@gmail.com', $user->email());
         $this->password()->shouldBe($hash);
-        // self::assertEquals($hash, $user->password());
     }
 }
