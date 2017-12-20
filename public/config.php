@@ -50,3 +50,7 @@ try {
     die ('Cannot connect to database: ' . $exception->getMessage());
 }
 
+$registerUser = new \Invoice\Application\UseCase\RegisterUser(
+    new \Invoice\Adapter\Pdo\Domain\UserRepository($connection),
+    new \Invoice\Adapter\Pdo\Domain\UserFactory()
+);

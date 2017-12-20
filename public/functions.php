@@ -33,23 +33,27 @@ function login() {
 
 function register()
 {
-    global $connection, $registerErrors;
+    global $registerUser, $registerErrors;
 
     if (empty($_POST['email'])) {
         $registerErrors['email'] = "Email field was empty.";
     } elseif (empty($_POST['password'])) {
         $registerErrors['password'] = "Password field was empty.";
     } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
-        $stmt = $connection->prepare('SELECT id, email FROM users WHERE email = :email');
-        $stmt->execute(['email' => $_POST['email']]);
-        $users = $stmt->fetchAll();
+        $registerUser->execute(new \Invoice\Application\UseCase\RegisterUser\Command(
+            $_POST['email'],
+            $_POST['password']
+        ));
+        //$stmt = $connection->prepare('SELECT id, email FROM users WHERE email = :email');
+        //$stmt->execute(['email' => $_POST['email']]);
+        //$users = $stmt->fetchAll();
 
-        if (count($users) > 0) {
-            $registerErrors['email'] = "User with given email exists already.";
-            return;
-        }
-        $stmt = $connection->prepare('INSERT INTO users (email, password_hash) VALUES (:email, :password)');
-        $stmt->execute(['email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)]);
+        //if (count($users) > 0) {
+        //    $registerErrors['email'] = "User with given email exists already.";
+        //    return;
+        //}
+        //$stmt = $connection->prepare('INSERT INTO users (email, password_hash) VALUES (:email, :password)');
+        //$stmt->execute(['email' => $_POST['email'], 'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)]);
         header('Location: /login.php?successRegister=1');
         exit;
     }
