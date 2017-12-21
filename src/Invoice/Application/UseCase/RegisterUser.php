@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Invoice\Application\UseCase;
 
+use Invoice\Application\TransactionManager;
 use Invoice\Domain\Email;
 use Invoice\Domain\Exception\EmailIsEmpty;
 use Invoice\Domain\Exception\EmailIsNotValid;
@@ -19,11 +20,17 @@ class RegisterUser
      * @var RegisterUser\Responder
      */
     private $responder;
+    /**
+     * @var TransactionManager
+     */
+    private $transactionManager;
 
     public function __construct(
+        TransactionManager $transactionManager,
         UserRepository $userRepository,
         UserFactory $userFactory
     ) {
+        $this->transactionManager = $transactionManager;
         $this->userRepository = $userRepository;
         $this->userFactory = $userFactory;
         $this->responder = new RegisterUser\DefaultResponder();
@@ -49,14 +56,23 @@ class RegisterUser
             return;
         }
 
-        if ($this->userRepository->has($user)) {
-            $this->responder->userWithSameEmailAlreadyExists(
-                new Email($command->email())
-            );
-            return;
-        }
+        $this->transactionManager->begin();
+        try {
+            if ($this->userRepository->has($user)) {
+                $this->transactionManager->rollback();
+                $this->responder->userWithSameEmailAlreadyExists(
+                    new Email($command->email())
+                );
+                return;
+            }
 
-        $this->userRepository->add($user);
+            $this->userRepository->add($user);
+            $this->transactionManager->commit();
+        } catch (\Throwable $e) {
+            $this->transactionManager->rollback();
+
+            throw $e;
+        }
         $this->responder->userWasRegistered($user);
     }
 

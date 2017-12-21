@@ -2,8 +2,10 @@
 
 namespace Tests\Invoice\Adapter\Pdo\Domain;
 
+use Invoice\Adapter\Pdo\Application\TransactionManager;
 use Invoice\Adapter\Pdo\Domain\UserFactory;
 use Invoice\Adapter\Pdo\Domain\UserRepository;
+use Invoice\Application\UnitOfWork;
 use Invoice\Domain\DefaultProfileFactory;
 use Invoice\Domain\Email;
 use Invoice\Domain\Exception\UserNotFound;
@@ -33,12 +35,23 @@ class UserRepositoryTest extends TestCase
      */
     private $userFactory;
 
+    /**
+     * @var TransactionManager
+     */
+    private $transactionManager;
+
     public function setUp()
     {
         $this->userFactory = new UserFactory(new DefaultProfileFactory());
+        $unitOfWork = new UnitOfWork();
+        $this->transactionManager = new TransactionManager(
+            $this->getConnection(),
+            $unitOfWork
+        );
         $this->userRepository = new UserRepository(
             $this->getConnection(),
-            $this->userFactory
+            $this->userFactory,
+            $unitOfWork
         );
 
         $this->getConnection()->exec('DELETE FROM users');
@@ -51,6 +64,7 @@ class UserRepositoryTest extends TestCase
             'test123'
         );
         $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
         $stmt = $this->getConnection()->query('SELECT * FROM users');
         $users = $stmt->fetchAll();
@@ -71,6 +85,7 @@ class UserRepositoryTest extends TestCase
             'test123'
         );
         $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
         self::assertTrue($this->userRepository->has($user));
         self::assertFalse($this->userRepository->has($secondUser));
@@ -85,8 +100,14 @@ class UserRepositoryTest extends TestCase
         $this->userRepository->add($user);
         $this->userRepository->add($user);
 
+        $this->transactionManager->commit();
+
+        $stmt = $this->getConnection()->query('SELECT * FROM users');
+        $users = $stmt->fetchAll();
+        self::assertCount(1, $users);
+
         $user = $this->userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'));
-        $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
         $stmt = $this->getConnection()->query('SELECT * FROM users');
         $users = $stmt->fetchAll();
@@ -103,6 +124,7 @@ class UserRepositoryTest extends TestCase
             'test123'
         );
         $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
         /**
          * @var \Invoice\Adapter\Pdo\Domain\User $user
@@ -134,13 +156,15 @@ class UserRepositoryTest extends TestCase
             'test123'
         );
         $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
+        $user = $this->userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'));
         $user->changeProfile(new Profile(
             'test',
             VatIdNumber::empty(),
             'address'
         ));
-        $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
         $user = $this->userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'));
 
@@ -155,13 +179,16 @@ class UserRepositoryTest extends TestCase
             'test123'
         );
         $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
+        $user = $this->userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'));
         $user->changeProfile(new Profile(
             'test',
             VatIdNumber::polish('9562307984'),
             'address'
         ));
         $this->userRepository->add($user);
+        $this->transactionManager->commit();
 
         $user = $this->userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'));
 

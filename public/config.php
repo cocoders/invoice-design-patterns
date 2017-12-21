@@ -1,5 +1,7 @@
-<?php use Invoice\Adapter\Pdo\Domain\UserFactory;
+<?php use Invoice\Adapter\Pdo\Application\TransactionManager;
+use Invoice\Adapter\Pdo\Domain\UserFactory;
 use Invoice\Adapter\Pdo\Domain\UserRepository;
+use Invoice\Application\UnitOfWork;
 use Invoice\Application\UseCase\EditProfile;
 use Invoice\Application\UseCase\RegisterUser;
 use Invoice\Domain\DefaultProfileFactory;
@@ -58,12 +60,16 @@ try {
 
 $profileFactory = new DefaultProfileFactory();
 $userFactory = new UserFactory($profileFactory);
-$userRepository = new UserRepository($connection, $userFactory);
+$unitOfWork = new UnitOfWork();
+$transactionManager = new TransactionManager($connection, $unitOfWork);
+$userRepository = new UserRepository($connection, $userFactory, $unitOfWork);
 $registerUser = new RegisterUser(
+    $transactionManager,
     $userRepository,
     $userFactory
 );
 $editProfile = new EditProfile(
+    $transactionManager,
     $userRepository,
     $profileFactory
 );

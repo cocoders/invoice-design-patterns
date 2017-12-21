@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Invoice\Application\UseCase;
 
+use Invoice\Application\TransactionManager;
 use Invoice\Application\UseCase\EditProfile\DefaultResponder;
 use Invoice\Application\UseCase\EditProfile\Responder;
 use Invoice\Domain\Email;
@@ -20,31 +21,48 @@ class EditProfile
      * @var Responder
      */
     private $responder;
+    /**
+     * @var TransactionManager
+     */
+    private $transactionManager;
 
-    public function __construct(UserRepository $userRepository, ProfileFactory $profileFactory)
-    {
+    public function __construct(
+        TransactionManager $transactionManager,
+        UserRepository $userRepository,
+        ProfileFactory $profileFactory
+    ) {
         $this->userRepository = $userRepository;
         $this->profileFactory = $profileFactory;
         $this->responder = new DefaultResponder();
+        $this->transactionManager = $transactionManager;
     }
 
     public function execute(EditProfile\Command $command)
     {
+        $this->transactionManager->begin();
+
         try {
             $user = $this->userRepository->getByEmail(new Email($command->email()));
         } catch (UserNotFound $exception) {
+            $this->transactionManager->rollback();
             $this->responder->userNotFound(new Email($command->email()));
 
             return;
         }
 
-        $user->changeProfile($this->profileFactory->create(
-            $command->name(),
-            $command->vatIdNumber(),
-            $command->address()
-        ));
+        try {
+            $user->changeProfile($this->profileFactory->create(
+                $command->name(),
+                $command->vatIdNumber(),
+                $command->address()
+            ));
 
-        $this->userRepository->add($user);
+            $this->transactionManager->commit();
+        } catch (\Exception $e) {
+            $this->transactionManager->rollback();
+
+            throw $e;
+        }
         $this->responder->userEditedSuccesfully($user);
     }
 

@@ -2,6 +2,7 @@
 
 namespace spec\Invoice\Application\UseCase;
 
+use Invoice\Application\TransactionManager;
 use Invoice\Application\UseCase\EditProfile;
 use Invoice\Application\UseCase\EditProfile\Responder;
 use Invoice\Domain\Email;
@@ -19,22 +20,25 @@ use Prophecy\Argument;
 class EditProfileSpec extends ObjectBehavior
 {
     function let(
+        TransactionManager $transactionManager,
         UserRepository $userRepository,
         ProfileFactory $profileFactory
     ) {
-        $this->beConstructedWith($userRepository, $profileFactory);
+        $this->beConstructedWith($transactionManager, $userRepository, $profileFactory);
     }
 
     function it_creates_user_and_store_in_repository(
+        TransactionManager $transactionManager,
         UserRepository $userRepository,
         ProfileFactory $profileFactory,
         Profile $profile,
         User $user
     ) {
+        $transactionManager->begin()->shouldBeCalled();
         $userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'))->willReturn($user);
         $profileFactory->create(Argument::cetera())->willReturn($profile);
         $user->changeProfile($profile)->shouldBeCalled();
-        $userRepository->add($user)->shouldBeCalled();
+        $transactionManager->commit()->shouldBeCalled();
 
         $this->execute(new EditProfile\Command(
             'leszek.prabucki@gmail.com',
@@ -45,17 +49,19 @@ class EditProfileSpec extends ObjectBehavior
     }
 
     function it_notifies_responder_when_user_is_edited_successfully(
+        TransactionManager $transactionManager,
         UserRepository $userRepository,
         ProfileFactory $profileFactory,
         Profile $profile,
         Responder $responder,
         User $user
     ) {
+        $transactionManager->begin()->shouldBeCalled();
         $userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'))->willReturn($user);
         $profileFactory->create(Argument::cetera())->willReturn($profile);
         $user->changeProfile($profile)->shouldBeCalled();
-        $userRepository->add($user)->shouldBeCalled();
         $responder->userEditedSuccesfully($user)->shouldBeCalled();
+        $transactionManager->commit()->shouldBeCalled();
 
         $this->registerResponder($responder);
         $this->execute(new EditProfile\Command(
@@ -67,16 +73,18 @@ class EditProfileSpec extends ObjectBehavior
     }
 
     function it_notifies_responder_when_user_is_not_found(
+        TransactionManager $transactionManager,
         UserRepository $userRepository,
         ProfileFactory $profileFactory,
         Profile $profile,
         Responder $responder,
         User $user
     ) {
+        $transactionManager->begin()->shouldBeCalled();
         $userRepository->getByEmail(new Email('leszek.prabucki@gmail.com'))->willThrow(UserNotFound::class);
         $profileFactory->create(Argument::cetera())->willReturn($profile);
         $user->changeProfile($profile)->willReturn();
-        $userRepository->add($user)->shouldNotBeCalled();
+        $transactionManager->rollback()->shouldBeCalled();
 
         $responder->userNotFound(new Email('leszek.prabucki@gmail.com'))->shouldBeCalled();
 
