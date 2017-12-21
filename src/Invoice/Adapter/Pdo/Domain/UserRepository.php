@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Invoice\Adapter\Pdo\Domain;
 
+use Invoice\Domain\Email;
+use Invoice\Domain\Exception\UserNotFound;
 use Invoice\Domain\User;
 use Invoice\Domain\UserRepository as UserRepositoryInterface;
 use PDO;
@@ -16,6 +18,16 @@ final class UserRepository implements UserRepositoryInterface
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+
+    /**
+     * @param Email $email
+     * @throws UserNotFound
+     * @return User
+     */
+    public function getByEmail(Email $email): User
+    {
+        // TODO: Implement getByEmail() method.
     }
 
     public function add(User $user): void

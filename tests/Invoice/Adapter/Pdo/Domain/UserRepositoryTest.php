@@ -3,6 +3,7 @@
 namespace Tests\Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Adapter\Pdo\Domain\User;
+use Invoice\Adapter\Pdo\Domain\UserFactory;
 use Invoice\Adapter\Pdo\Domain\UserRepository;
 use Invoice\Domain\Email;
 use Invoice\Domain\PasswordHash;
@@ -24,20 +25,26 @@ class UserRepositoryTest extends TestCase
      */
     private $userRepository;
 
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
     public function setUp()
     {
         $this->userRepository = new UserRepository(
             $this->getConnection()
         );
+        $this->userFactory = new UserFactory();
 
         $this->getConnection()->exec('DELETE FROM users');
     }
 
     public function testThatSaveUserIntoDatabase()
     {
-        $user = new User(
-            new Email('leszek.prabucki@gmail.com'),
-            PasswordHash::fromPlainPassword('test123')
+        $user = $this->userFactory->create(
+            'leszek.prabucki@gmail.com',
+            'test123'
         );
         $this->userRepository->add($user);
 
@@ -51,24 +58,25 @@ class UserRepositoryTest extends TestCase
 
     public function testThatCheckIfHasUserInDatabase()
     {
-        $user = new User(
-            new Email('leszek.prabucki@gmail.com'),
-            PasswordHash::fromPlainPassword('test123')
+        $user = $this->userFactory->create(
+            'leszek.prabucki@gmail.com',
+            'test123'
+        );
+        $secondUser = $this->userFactory->create(
+            'jan.kowalski@gmail.com',
+            'test123'
         );
         $this->userRepository->add($user);
 
         self::assertTrue($this->userRepository->has($user));
-        self::assertFalse($this->userRepository->has(new User(
-            new Email('jan.kowalski@gmail.com'),
-            PasswordHash::fromPlainPassword('test')
-        )));
+        self::assertFalse($this->userRepository->has($secondUser));
     }
 
     public function testThatSaveSameUserTwiceDoNotInsertNewRecord()
     {
-        $user = new User(
-            new Email('leszek.prabucki@gmail.com'),
-            PasswordHash::fromPlainPassword('test123')
+        $user = $this->userFactory->create(
+            'leszek.prabucki@gmail.com',
+            'test123'
         );
         $this->userRepository->add($user);
         $this->userRepository->add($user);

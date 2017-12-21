@@ -6,8 +6,10 @@ namespace Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Domain\Email;
 use Invoice\Domain\PasswordHash;
+use Invoice\Domain\Profile;
 use Invoice\Domain\User;
 use Invoice\Domain\UserFactory as UserFactoryInterface;
+use Invoice\Domain\VatIdNumber;
 
 final class UserFactory implements UserFactoryInterface
 {
@@ -15,7 +17,8 @@ final class UserFactory implements UserFactoryInterface
     {
         return new \Invoice\Adapter\Pdo\Domain\User(
             new Email($email),
-            PasswordHash::fromPlainPassword($password)
+            PasswordHash::fromPlainPassword($password),
+            Profile::defaultProfile()
         );
     }
 }
