@@ -40,4 +40,16 @@ final class UserRepository implements UserRepositoryInterface
 
         $user->setId((int) $this->pdo->lastInsertId());
     }
+
+    public function has(User $user): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM users WHERE email = :email'
+        );
+        $stmt->execute([
+            'email' => (string) $user->email()
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+    }
 }

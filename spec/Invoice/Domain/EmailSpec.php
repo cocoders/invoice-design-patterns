@@ -2,10 +2,10 @@
 
 namespace spec\Invoice\Domain;
 
-use InvalidArgumentException;
 use Invoice\Domain\Email;
+use Invoice\Domain\Exception\EmailIsEmpty;
+use Invoice\Domain\Exception\EmailIsNotValid;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 /**
  * @mixin Email
@@ -19,17 +19,17 @@ class EmailSpec extends ObjectBehavior
         $this->__toString()->shouldBe('leszek.prabucki@gmail.com');
     }
 
-    function it_throws_invalid_argument_exception_for_empty_mail()
+    function it_throws_email_is_empty_exception_for_empty_mail()
     {
         $this->beConstructedWith('');
 
-        $this->shouldThrow(InvalidArgumentException::class)->duringInstantiation();
+        $this->shouldThrow(EmailIsEmpty::class)->duringInstantiation();
     }
 
-    function it_throws_invalid_argument_exception_for_not_valid_mail()
+    function it_throws_email_is_not_valid_exception_for_not_valid_mail()
     {
         $this->beConstructedWith('not-valid');
 
-        $this->shouldThrow(InvalidArgumentException::class)->duringInstantiation();
+        $this->shouldThrow(EmailIsNotValid::class)->duringInstantiation();
     }
 }

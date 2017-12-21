@@ -49,6 +49,21 @@ class UserRepositoryTest extends TestCase
         self::assertNotNull($user->id());
     }
 
+    public function testThatCheckIfHasUserInDatabase()
+    {
+        $user = new User(
+            new Email('leszek.prabucki@gmail.com'),
+            PasswordHash::fromPlainPassword('test123')
+        );
+        $this->userRepository->add($user);
+
+        self::assertTrue($this->userRepository->has($user));
+        self::assertFalse($this->userRepository->has(new User(
+            new Email('jan.kowalski@gmail.com'),
+            PasswordHash::fromPlainPassword('test')
+        )));
+    }
+
     public function testThatSaveSameUserTwiceDoNotInsertNewRecord()
     {
         $user = new User(
