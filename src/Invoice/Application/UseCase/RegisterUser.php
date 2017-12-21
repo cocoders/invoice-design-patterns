@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Invoice\Application\UseCase;
 
-use Invoice\Application\UseCase\RegisterUser;
+use Invoice\Domain\Email;
 use Invoice\Domain\UserFactory;
 use Invoice\Domain\UserRepository;
 
@@ -32,8 +32,15 @@ class RegisterUser
             ->userFactory
             ->create($command->email(), $command->password())
         ;
-        $this->userRepository->add($user);
 
+        if ($this->userRepository->has($user)) {
+            $this->responder->userWithSameEmailAlreadyExists(
+                new Email($command->email())
+            );
+            return;
+        }
+
+        $this->userRepository->add($user);
         $this->responder->userWasRegistered($user);
     }
 

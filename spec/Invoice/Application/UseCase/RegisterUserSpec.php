@@ -31,7 +31,7 @@ class RegisterUserSpec extends ObjectBehavior
         $userFactory->create('leszek.prabucki@gmail.com', 'password')->willReturn(
             $user
         );
-
+        $userRepository->has($user)->willReturn(false);
         $userRepository->add($user)->shouldBeCalled();
 
         $this->execute(new RegisterUser\Command(
@@ -40,7 +40,7 @@ class RegisterUserSpec extends ObjectBehavior
         ));
     }
 
-    function it_notify_responder_when_user_is_registered(
+    function it_notifies_responder_when_user_is_registered(
         UserRepository $userRepository,
         UserFactory $userFactory,
         User $user,
@@ -52,9 +52,34 @@ class RegisterUserSpec extends ObjectBehavior
                 $user
             )
         ;
-
-        $userRepository->add($user);
+        $userRepository->has($user)->willReturn(false);
+        $userRepository->add($user)->shouldBeCalled();
         $responder->userWasRegistered($user)->shouldBeCalled();
+
+        $this->registerResponder($responder);
+        $this->execute(new RegisterUser\Command(
+            'leszek.prabucki@gmail.com',
+            'password'
+        ));
+    }
+
+    function it_notifies_responder_when_user_which_given_email_is_found(
+        UserRepository $userRepository,
+        UserFactory $userFactory,
+        User $user,
+        Responder $responder
+    ) {
+        $userFactory
+            ->create('leszek.prabucki@gmail.com', 'password')
+            ->willReturn(
+                $user
+            )
+        ;
+        $userRepository->has($user)->willReturn(true);
+        $responder->userWithSameEmailAlreadyExists(
+            new Email('leszek.prabucki@gmail.com')
+        )->shouldBeCalled();
+        $userRepository->add($user)->shouldNotBeCalled();
 
         $this->registerResponder($responder);
         $this->execute(new RegisterUser\Command(
