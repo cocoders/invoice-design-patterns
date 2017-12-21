@@ -3,6 +3,7 @@
 namespace spec\Invoice\Domain;
 
 use Invoice\Domain\PasswordHash;
+use Invoice\Domain\Exception\PasswordIsNotValid;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -24,6 +25,13 @@ class PasswordHashSpec extends ObjectBehavior
         $this->beConstructedThrough('fromHashedPassword', [$hash]);
 
         $this->__toString()->shouldBe($hash);
+    }
+
+    function it_throws_password_is_not_valid_exception_when_password_is_empty()
+    {
+        $this->beConstructedThrough('fromPlainPassword', ['']);
+
+        $this->shouldThrow(PasswordIsNotValid::class)->duringInstantiation();
     }
 
     function getMatchers(): array

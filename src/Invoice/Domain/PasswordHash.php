@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Invoice\Domain;
 
+use Invoice\Domain\Exception\PasswordIsNotValid;
+
 class PasswordHash
 {
     private $hash;
@@ -20,6 +22,10 @@ class PasswordHash
 
     public static function fromPlainPassword(string $password): PasswordHash
     {
+        if (!$password) {
+            throw new PasswordIsNotValid();
+        }
+
         return new PasswordHash(password_hash($password, PASSWORD_BCRYPT));
     }
 
