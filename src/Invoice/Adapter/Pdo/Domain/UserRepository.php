@@ -14,10 +14,16 @@ final class UserRepository implements UserRepositoryInterface
 {
     private $pdo;
 
-    public function __construct(PDO $pdo)
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    public function __construct(PDO $pdo, UserFactory $userFactory)
     {
         $this->pdo = $pdo;
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->userFactory = $userFactory;
     }
 
     /**
@@ -27,7 +33,18 @@ final class UserRepository implements UserRepositoryInterface
      */
     public function getByEmail(Email $email): User
     {
-        // TODO: Implement getByEmail() method.
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM users WHERE email = :email'
+        );
+        $stmt->execute([
+            'email' => (string) $email
+        ]);
+
+        if ($result = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            return $this->userFactory->createFromStorage($result);
+        }
+
+        throw new UserNotFound();
     }
 
     public function add(User $user): void
@@ -39,7 +56,16 @@ final class UserRepository implements UserRepositoryInterface
         }
 
         if ($user->id()) {
-            //tutaj update
+            $stmt = $this->pdo->prepare('UPDATE users SET name = :name, vat = :vat, address = :address
+            WHERE id = :id');
+
+            $profile = $user->profile();
+            $stmt->execute([
+                'name' => $profile->name(),
+                'vat' => (string) $profile->vatIdNumber(),
+                'address' => $profile->address(),
+                'id' => $user->id()
+            ]);
             return;
         }
         $stmt = $this->pdo->prepare('INSERT INTO users (email, password_hash)

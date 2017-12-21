@@ -17,4 +17,11 @@ interface UserFactory
      * @return User
      */
     public function create(string $email, string $password): User;
+
+    /**
+     * @throws EmailIsEmpty
+     * @throws EmailIsNotValid
+     * @return User
+     */
+    public function createFromStorage(array $array): User;
 }

@@ -1,4 +1,10 @@
-<?php require_once '../vendor/autoload.php'; ?>
+<?php use Invoice\Adapter\Pdo\Domain\UserFactory;
+use Invoice\Adapter\Pdo\Domain\UserRepository;
+use Invoice\Application\UseCase\EditProfile;
+use Invoice\Application\UseCase\RegisterUser;
+use Invoice\Domain\DefaultProfileFactory;
+
+require_once '../vendor/autoload.php'; ?>
 <?php
 
 $config = [
@@ -50,7 +56,14 @@ try {
     die ('Cannot connect to database: ' . $exception->getMessage());
 }
 
-$registerUser = new \Invoice\Application\UseCase\RegisterUser(
-    new \Invoice\Adapter\Pdo\Domain\UserRepository($connection),
-    new \Invoice\Adapter\Pdo\Domain\UserFactory()
+$profileFactory = new DefaultProfileFactory();
+$userFactory = new UserFactory($profileFactory);
+$userRepository = new UserRepository($connection, $userFactory);
+$registerUser = new RegisterUser(
+    $userRepository,
+    $userFactory
+);
+$editProfile = new EditProfile(
+    $userRepository,
+    $profileFactory
 );

@@ -17,15 +17,6 @@ class Profile
         $this->address = $address;
     }
 
-    public static function defaultProfile(): Profile
-    {
-        return new Profile(
-            '',
-            VatIdNumber::empty(),
-            ''
-        );
-    }
-
     public function name(): string
     {
         return $this->name;
