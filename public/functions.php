@@ -1,9 +1,11 @@
 <?php
 
+use Invoice\Adapter\Legacy\Application\UseCase\RegisterUser\Errors;
+use Invoice\Adapter\Legacy\Application\UseCase\RegisterUser\Responder;
 use Invoice\Application\UseCase\RegisterUser;
 
 $loginErrors = [];
-$registerErrors = [];
+$registerErrors = new Errors();
 $invoiceFormErrors = [];
 $profileFormErrors = [];
 
@@ -37,15 +39,16 @@ function register()
 {
     global $registerUser, $registerErrors;
 
+    $registerUser->registerResponder(new Responder($registerErrors));
+    $registerUser->execute(new RegisterUser\Command(
+        $_POST['email'],
+        $_POST['password']
+    ));
     if (empty($_POST['email'])) {
         $registerErrors['email'] = "Email field was empty.";
     } elseif (empty($_POST['password'])) {
         $registerErrors['password'] = "Password field was empty.";
     } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
-        $registerUser->execute(new RegisterUser\Command(
-            $_POST['email'],
-            $_POST['password']
-        ));
         //$stmt = $connection->prepare('SELECT id, email FROM users WHERE email = :email');
         //$stmt->execute(['email' => $_POST['email']]);
         //$users = $stmt->fetchAll();

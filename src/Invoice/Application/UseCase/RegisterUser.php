@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Invoice\Application\UseCase;
 
 use Invoice\Domain\Email;
+use Invoice\Domain\Exception\EmailIsEmpty;
+use Invoice\Domain\Exception\EmailIsNotValid;
+use Invoice\Domain\Exception\PasswordIsNotValid;
 use Invoice\Domain\UserFactory;
 use Invoice\Domain\UserRepository;
 
@@ -28,10 +31,23 @@ class RegisterUser
 
     public function execute(RegisterUser\Command $command): void
     {
-        $user = $this
-            ->userFactory
-            ->create($command->email(), $command->password())
-        ;
+        try {
+            $user = $this
+                ->userFactory
+                ->create($command->email(), $command->password());
+        } catch (EmailIsEmpty $exception) {
+            $this->responder->emailIsEmpty();
+
+            return;
+        } catch (EmailIsNotValid $exception) {
+            $this->responder->emailIsNotValid();
+
+            return;
+        } catch (PasswordIsNotValid $exception) {
+            $this->responder->passwordIsNotValid();
+
+            return;
+        }
 
         if ($this->userRepository->has($user)) {
             $this->responder->userWithSameEmailAlreadyExists(

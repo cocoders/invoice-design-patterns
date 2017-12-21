@@ -13,4 +13,7 @@ interface Responder
     public function userWithSameEmailAlreadyExists(
         Email $email
     ): void;
+    public function emailIsEmpty(): void;
+    public function emailIsNotValid(): void;
+    public function passwordIsNotValid(): void;
 }
