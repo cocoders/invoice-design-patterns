@@ -1,5 +1,7 @@
 <?php
 
+use Invoice\Application\UseCase\RegisterUser;
+
 $loginErrors = [];
 $registerErrors = [];
 $invoiceFormErrors = [];
@@ -40,7 +42,7 @@ function register()
     } elseif (empty($_POST['password'])) {
         $registerErrors['password'] = "Password field was empty.";
     } elseif (!empty($_POST['email']) && !empty($_POST['password'])) {
-        $registerUser->execute(new \Invoice\Application\UseCase\RegisterUser\Command(
+        $registerUser->execute(new RegisterUser\Command(
             $_POST['email'],
             $_POST['password']
         ));
