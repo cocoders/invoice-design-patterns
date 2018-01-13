@@ -7,7 +7,7 @@ namespace Invoice\Adapter\Pdo\Domain;
 use Invoice\Domain\Email;
 use Invoice\Domain\User as BaseUser;
 
-class User extends BaseUser
+final class User extends BaseUser
 {
     private $id;
 
@@ -24,7 +24,7 @@ class User extends BaseUser
         return $user;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }

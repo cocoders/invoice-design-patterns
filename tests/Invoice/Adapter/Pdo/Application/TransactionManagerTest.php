@@ -5,35 +5,16 @@ declare(strict_types=1);
 namespace Tests\Invoice\Adapter\Pdo\Application;
 
 use Invoice\Domain\Email;
-use PDO;
-use PHPUnit\Framework\TestCase;
 use Invoice\Adapter\Pdo\Application\TransactionManager;
 use Invoice\Adapter\Pdo\UnitOfWork;
 use Invoice\Adapter\Pdo\Domain\User;
+use Tests\Invoice\DbTestCase;
 
 /**
  * @integration
  */
-class TransactionManagerTest extends TestCase
+class TransactionManagerTest extends DbTestCase
 {
-    /**
-     * @var PDO
-     */
-    private $pdo;
-
-    public function setUp()
-    {
-        if (!$this->pdo) {
-            $this->pdo = new PDO(
-                getenv('POSTGRES_DSN'),
-                getenv('POSTGRES_USER'),
-                getenv('POSTGRES_PASSWORD')
-            );
-        }
-
-        $this->pdo->exec('DELETE FROM users');
-    }
-
     public function testThatCommitCreateNewRecordInDatabase()
     {
         $user = new User(
