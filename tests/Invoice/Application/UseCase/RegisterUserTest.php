@@ -44,4 +44,21 @@ class RegisterUserTest extends DbTestCase
         self::assertCount(1, $users);
         self::assertEquals('leszek.prabucki@gmail.com', $users[0]['email']);
     }
+
+    function testThatCannotAddUserTwice()
+    {
+        $this->registerUser->execute(new RegisterUser\Command(
+            'leszek.prabucki@gmail.com',
+            password_hash('ktoIdziePoPiwo', PASSWORD_BCRYPT)
+        ));
+        $this->registerUser->execute(new RegisterUser\Command(
+            'leszek.prabucki@gmail.com',
+            password_hash('ktoIdziePoPiwo', PASSWORD_BCRYPT)
+        ));
+
+        $users = $this->pdo->query('SELECT * FROM users')->fetchAll();
+
+        self::assertCount(1, $users);
+        self::assertEquals('leszek.prabucki@gmail.com', $users[0]['email']);
+    }
 }

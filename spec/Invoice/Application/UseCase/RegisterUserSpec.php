@@ -130,4 +130,39 @@ class RegisterUserSpec extends ObjectBehavior
             'password'
         ));
     }
+
+    function it_notify_responser_if_user_which_such_email_already_exists(
+        TransactionManager $transactionManager,
+        UserFactory $userFactory,
+        User $user,
+        Users $users,
+        RegisterUser\Responder $responder
+    ) {
+        $transactionManager->begin()->shouldBeCalled();
+        $userFactory->create(
+            'leszek.prabucki@gmail.com',
+            'password'
+        )->willReturn($user);
+        $users->has($user)->willReturn(true);
+        $transactionManager->rollback()->shouldBeCalled();
+        $responder->userAlreadyExists($user)->shouldBeCalled();
+
+        $this->registerResponder($responder);
+        $this->execute(new RegisterUser\Command(
+            'leszek.prabucki@gmail.com',
+            'password'
+        ));
+    }
+
+    function it_notify_responser_if_username_is_empty(
+        RegisterUser\Responder $responder
+    ) {
+        $responder->emailIsEmpty()->shouldBeCalled();
+
+        $this->registerResponder($responder);
+        $this->execute(new RegisterUser\Command(
+            '',
+            'password'
+        ));
+    }
 }

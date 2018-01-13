@@ -15,21 +15,33 @@ class RegisterUser
     private $users;
     private $userFactory;
 
+    /**
+     * @var RegisterUser\Responder
+     */
+    private $responder;
+
     public function __construct(TransactionManager $transactionManager, Users $users, UserFactory $userFactory)
     {
         $this->transactionManager = $transactionManager;
         $this->users = $users;
         $this->userFactory = $userFactory;
+        $this->responder = new RegisterUser\NullResponder();
     }
 
     public function execute(RegisterUser\Command $command): void
     {
+        if (!trim($command->email())) {
+            $this->responder->emailIsEmpty();
+            return;
+        }
+
         $this->transactionManager->begin();
 
         try {
             $user = $this->userFactory->create($command->email(), $command->password());
             if ($this->users->has($user)) {
                 $this->transactionManager->rollback();
+                $this->responder->userAlreadyExists($user);
                 return;
             }
             $this->users->add($user);
@@ -39,5 +51,12 @@ class RegisterUser
 
             throw $exception;
         }
+
+        $this->responder->userRegistered($user);
+    }
+
+    public function registerResponder(RegisterUser\Responder $responder): void
+    {
+        $this->responder = $responder;
     }
 }

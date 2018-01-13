@@ -51,6 +51,7 @@ class TransactionManager implements TransactionManagerInterface
             }
         }
 
+        $this->pdo->commit();
         $this->unitOfWork->clear();
     }
 

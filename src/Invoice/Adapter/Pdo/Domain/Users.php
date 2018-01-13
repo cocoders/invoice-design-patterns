@@ -45,8 +45,8 @@ final class Users implements UsersInterface
             return true;
         }
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE id = :id');
-        $stmt->execute(['id' => $user->id()]);
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
+        $stmt->execute(['email' => $user->email()]);
 
         return (bool) $stmt->fetchColumn();
     }

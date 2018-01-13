@@ -1,4 +1,3 @@
-<?php include '../vendor/autoload.php' ?>
 <?php session_start(); ?>
 <?php ob_start(); ?>
 <?php if ((isset($_SESSION['loggedInUser']) && !$_SESSION['loggedInUser']) or !isset($_SESSION['loggedInUser'])): ?>
