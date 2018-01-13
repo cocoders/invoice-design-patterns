@@ -7,19 +7,14 @@ namespace Invoice\Adapter\Pdo\Application;
 use Invoice\Adapter\Pdo\Domain\User;
 use Invoice\Adapter\Pdo\UnitOfWork;
 use Invoice\Application\TransactionManager as TransactionManagerInterface;
+use PDO;
 
 class TransactionManager implements TransactionManagerInterface
 {
-    /**
-     * @var \PDO
-     */
     private $pdo;
-    /**
-     * @var UnitOfWork
-     */
     private $unitOfWork;
 
-    public function __construct(\PDO $pdo, UnitOfWork $unitOfWork)
+    public function __construct(PDO $pdo, UnitOfWork $unitOfWork)
     {
         $this->pdo = $pdo;
         $this->unitOfWork = $unitOfWork;

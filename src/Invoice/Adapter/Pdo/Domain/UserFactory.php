@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Invoice\Adapter\Pdo\Domain;
 
-use Invoice\Adapter\Pdo\Domain\User;
 use Invoice\Domain\Email;
+use Invoice\Domain\User as BaseUser;
+use Invoice\Domain\UserFactory as UserFactoryInterface;
 
-class UserFactory implements \Invoice\Domain\UserFactory
+class UserFactory implements UserFactoryInterface
 {
-    public function create(string $email, string $password): \Invoice\Domain\User
+    /**
+     * @return User
+     */
+    public function create(string $email, string $password): BaseUser
     {
-        $email = new Email($email);
-
-        return new User($email, $password);
+        return new User(
+            new Email($email),
+            $password
+        );
     }
 }

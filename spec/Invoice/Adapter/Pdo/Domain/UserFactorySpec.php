@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Adapter\Pdo\Domain\User;
