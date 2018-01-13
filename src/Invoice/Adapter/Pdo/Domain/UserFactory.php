@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Invoice\Adapter\Pdo\Domian;
+namespace Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Adapter\Pdo\Domain\User;
 use Invoice\Domain\Email;

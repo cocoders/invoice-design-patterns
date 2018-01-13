@@ -1,9 +1,9 @@
 <?php
 
-namespace spec\Invoice\Adapter\Pdo\Domian;
+namespace spec\Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Adapter\Pdo\Domain\User;
-use Invoice\Adapter\Pdo\Domian\UserFactory as PdoUserFactory;
+use Invoice\Adapter\Pdo\Domain\UserFactory as PdoUserFactory;
 use Invoice\Domain\UserFactory;
 use PhpSpec\ObjectBehavior;
 
