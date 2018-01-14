@@ -9,7 +9,4 @@ use Invoice\Domain\User as BaseUser;
 class User extends BaseUser
 {
     private $id;
-    private $vat;
-    private $name;
-    private $address;
 }

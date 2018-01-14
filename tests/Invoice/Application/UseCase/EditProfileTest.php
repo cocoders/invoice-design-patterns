@@ -28,7 +28,7 @@ class EditProfileTest extends DoctrineTestCase
     {
         parent::setUp();
         $transactionManager = new TransactionManager($this->em);
-        $users = new Users(new UserFactory(), $this->em, $this->em->getClassMetadata(User::class));
+        $users = new Users($this->em);
         $registerUser = new RegisterUser(
             $transactionManager,
             $users,

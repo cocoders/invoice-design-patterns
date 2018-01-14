@@ -27,7 +27,7 @@ class RegisterUserTest extends DoctrineTestCase
         parent::setUp();
         $this->registerUser = new RegisterUser(
             new TransactionManager($this->em),
-            new Users(new UserFactory(), $this->em, $this->em->getClassMetadata(User::class)),
+            new Users($this->em),
             new UserFactory()
         );
     }

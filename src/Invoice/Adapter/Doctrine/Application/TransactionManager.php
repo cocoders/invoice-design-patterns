@@ -9,9 +9,6 @@ use Invoice\Application\TransactionManager as TransactionManagerInterface;
 
 final class TransactionManager implements TransactionManagerInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)

@@ -6,7 +6,7 @@ namespace Invoice\Domain\User;
 
 use Invoice\Domain\VatNumber;
 
-class Profile
+final class Profile
 {
     private $vatNumber;
     private $name;

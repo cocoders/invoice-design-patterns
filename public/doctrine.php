@@ -4,8 +4,16 @@ use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
 // replace with mechanism to retrieve EntityManager in your app
-$paths = array(__DIR__ . "/../src/Invoice/Adapter/Doctrine/config/mapping");
+$paths = [__DIR__ . "/../src/Invoice/Adapter/Doctrine/config/mapping"];
 $isDevMode = false;
+
+$config = [
+    'db_user' => getenv('POSTGRES_USER'),
+    'db_password' => getenv('POSTGRES_PASSWORD'),
+    'db_database' => getenv('POSTGRES_DB'),
+    'db_host' => getenv('POSTGRES_HOST'),
+    'db_database_dsn' => getenv('POSTGRES_DSN'),
+];
 
 // the connection configuration
 $dbParams = array(
@@ -13,7 +21,7 @@ $dbParams = array(
     'user'     => $config['db_user'],
     'password' => $config['db_password'],
     'dbname'   => $config['db_database'],
-    'host'   => $config['db_host'],
+    'host'   => $config['db_host'] ?? 'postgres',
 );
 
 $config = Setup::createYAMLMetadataConfiguration($paths, $isDevMode);

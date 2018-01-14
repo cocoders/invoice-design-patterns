@@ -5,45 +5,43 @@ declare(strict_types=1);
 namespace Invoice\Adapter\Doctrine\Domain;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Invoice\Domain\Email;
 use Invoice\Domain\Exception\UserNotFound;
 use Invoice\Domain\User as BaseUser;
 use Invoice\Domain\Users as UsersInterface;
 
-final class Users extends EntityRepository implements UsersInterface
+final class Users implements UsersInterface
 {
-    /**
-     * @var UserFactory
-     */
-    private $userFactory;
+    private $entityManager;
 
-    public function __construct(UserFactory $userFactory, EntityManagerInterface $entityManager, ClassMetadata $metadata)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->userFactory = $userFactory;
-        parent::__construct($entityManager, $metadata);
+        $this->entityManager = $entityManager;
     }
 
     public function add(BaseUser $user): void
     {
-        $this->getEntityManager()->persist($user);
+        $this->entityManager->persist($user);
     }
 
     public function has(BaseUser $user): bool
     {
-        return (bool) $this->findBy(['email' => (string) $user->email()]);
+        return (bool) $this
+            ->entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email.email' => (string) $user->email()])
+        ;
     }
 
     public function get(Email $email): BaseUser
     {
-        /** @var User $result */
-        $result = $this->findOneBy(['email' => $email]);
+        /** @var User $user */
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email.email' => (string) $email]);
 
-        if (!$result) {
+        if (!$user) {
             throw new UserNotFound();
         }
 
-        return $this->userFactory->create((string) $result->email(), $result->passwordHash());
+        return $user;
     }
 }

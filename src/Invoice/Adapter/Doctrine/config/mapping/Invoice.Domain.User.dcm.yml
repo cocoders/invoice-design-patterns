@@ -1,0 +1,15 @@
+Invoice\Domain\User:
+  type: mappedSuperclass
+  fields:
+    passwordHash:
+      type: string
+      column: password_hash
+      nullable: false
+  embedded:
+    profile:
+      class: Invoice\Domain\User\Profile
+      columnPrefix: false
+    email:
+      class: Invoice\Domain\Email
+      columnPrefix: false
+      nullable: false
