@@ -7,6 +7,13 @@ use Doctrine\ORM\EntityManager;
 $paths = array(__DIR__ . "/../src/Invoice/Adapter/Doctrine/config/mapping");
 $isDevMode = false;
 
+$config = [
+    'db_user' => getenv('POSTGRES_USER'),
+    'db_password' => getenv('POSTGRES_PASSWORD'),
+    'db_database' => getenv('POSTGRES_DB'),
+    'db_host' => getenv('POSTGRES_HOST'),
+];
+
 // the connection configuration
 $dbParams = array(
     'driver'   => 'pdo_pgsql',

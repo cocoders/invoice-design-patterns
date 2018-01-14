@@ -14,14 +14,8 @@ use Invoice\Domain\Users as UsersInterface;
 
 final class Users extends EntityRepository implements UsersInterface
 {
-    /**
-     * @var UserFactory
-     */
-    private $userFactory;
-
-    public function __construct(UserFactory $userFactory, EntityManagerInterface $entityManager, ClassMetadata $metadata)
+    public function __construct(EntityManagerInterface $entityManager, ClassMetadata $metadata)
     {
-        $this->userFactory = $userFactory;
         parent::__construct($entityManager, $metadata);
     }
 
@@ -32,18 +26,18 @@ final class Users extends EntityRepository implements UsersInterface
 
     public function has(BaseUser $user): bool
     {
-        return (bool) $this->findBy(['email' => (string) $user->email()]);
+        return (bool) $this->findOneBy(['email.email' => (string) $user->email()]);
     }
 
     public function get(Email $email): BaseUser
     {
         /** @var User $result */
-        $result = $this->findOneBy(['email' => $email]);
+        $user = $this->findOneBy(['email.email' => $email]);
 
-        if (!$result) {
+        if (!$user) {
             throw new UserNotFound();
         }
 
-        return $this->userFactory->create((string) $result->email(), $result->passwordHash());
+        return $user;
     }
 }

@@ -1,0 +1,5 @@
+Invoice\Domain\Email:
+  type: embeddable
+  fields:
+    email:
+      type: string

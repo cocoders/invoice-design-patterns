@@ -15,7 +15,7 @@ class User
     /**
      * @var Profile|null
      */
-    private $profile;
+    protected $profile;
 
     public function __construct(Email $email, string $passwordHash)
     {

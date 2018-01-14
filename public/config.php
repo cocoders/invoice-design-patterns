@@ -1,15 +1,12 @@
 <?php include '../vendor/autoload.php' ?>
-<?php
-    $config = [
-        'db_user' => getenv('POSTGRES_USER'),
-        'db_password' => getenv('POSTGRES_PASSWORD'),
-        'db_database' => getenv('POSTGRES_DB'),
-        'db_host' => getenv('POSTGRES_HOST'),
-        'db_database_dsn' => getenv('POSTGRES_DSN'),
-    ];
-?>
 <?php include './doctrine.php' ?>
 <?php
+
+$config = [
+    'db_user' => getenv('POSTGRES_USER'),
+    'db_password' => getenv('POSTGRES_PASSWORD'),
+    'db_database_dsn' => getenv('POSTGRES_DSN'),
+];
 
 $pages = [
     'dashboard' => [
@@ -58,7 +55,6 @@ try {
 }
 
 $users = new \Invoice\Adapter\Doctrine\Domain\Users(
-    new \Invoice\Adapter\Doctrine\Domain\UserFactory(),
     $entityManager,
     $entityManager->getClassMetadata(\Invoice\Adapter\Doctrine\Domain\User::class)
 );
