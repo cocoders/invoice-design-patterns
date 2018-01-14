@@ -46,7 +46,7 @@ class EditProfileSpec extends ObjectBehavior
         ));
     }
 
-    function it_notify_responser_if_user_not_found(
+    function it_notify_responder_if_user_not_found(
         TransactionManager $transactionManager,
         Users $users,
         User $user,
@@ -72,7 +72,7 @@ class EditProfileSpec extends ObjectBehavior
         ));
     }
 
-    function it_notify_responser_when_profile_edited(
+    function it_notify_responder_when_profile_edited(
         TransactionManager $transactionManager,
         Users $users,
         User $user,
