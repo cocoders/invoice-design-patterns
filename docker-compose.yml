@@ -21,6 +21,7 @@ services:
       POSTGRES_USER: 'invoice'
       POSTGRES_DB: 'invoice'
       POSTGRES_PASSWORD: '!E4\mP-C;Q!@2vV3'
+      POSTGRES_HOST: 'postgres'
     restart: always
     working_dir: /var/www/invoice
 

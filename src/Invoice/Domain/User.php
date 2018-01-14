@@ -9,8 +9,8 @@ use Invoice\Domain\User\Profile;
 
 class User
 {
-    private $email;
-    private $passwordHash;
+    protected $email;
+    protected $passwordHash;
 
     /**
      * @var Profile|null
