@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Tests\Invoice\Application\UseCase;
 
 use Invoice\Adapter\Legacy\Domain\VatNumberFactory;
-use Invoice\Adapter\Pdo\Application\TransactionManager;
-use Invoice\Adapter\Pdo\Domain\UserFactory;
-use Invoice\Adapter\Pdo\Domain\Users;
-use Invoice\Adapter\Pdo\UnitOfWork;
+use Invoice\Adapter\Doctrine\Application\TransactionManager;
+use Invoice\Adapter\Doctrine\Domain\UserFactory;
+use Invoice\Adapter\Doctrine\Domain\Users;
+use Invoice\Adapter\Doctrine\Domain\User;
 use Invoice\Application\UseCase\RegisterUser;
 use Invoice\Application\UseCase\EditProfile;
 use Invoice\Domain\Exception\UserNotFound;
-use Tests\Invoice\DbTestCase;
+use Tests\Invoice\DoctrineTestCase;
 
 /**
  * @integration
  */
-class EditProfileTest extends DbTestCase
+class EditProfileTest extends DoctrineTestCase
 {
     /**
      * @var EditProfile
@@ -27,9 +27,8 @@ class EditProfileTest extends DbTestCase
     public function setUp()
     {
         parent::setUp();
-        $unitOfWork = new UnitOfWork();
-        $transactionManager = new TransactionManager($this->pdo, $unitOfWork);
-        $users = new Users($this->pdo, $unitOfWork);
+        $transactionManager = new TransactionManager($this->em);
+        $users = new Users($this->em);
         $registerUser = new RegisterUser(
             $transactionManager,
             $users,

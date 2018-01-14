@@ -9,7 +9,6 @@ use Invoice\Domain\Email;
 use Invoice\Domain\Exception\UserNotFound;
 use Invoice\Domain\User as BaseUser;
 use Invoice\Domain\Users as UsersInterface;
-use Invoice\Domain\VatNumber;
 use PDO;
 
 final class Users implements UsersInterface

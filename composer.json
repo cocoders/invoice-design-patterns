@@ -3,7 +3,10 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "doctrine/dbal": "dev-master",
+        "doctrine/orm": "^2.6",
+        "symfony/yaml": "^4.0"
     },
     "config": {
         "preferred-install": {
