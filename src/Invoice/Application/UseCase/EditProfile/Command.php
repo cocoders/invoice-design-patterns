@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Invoice\Application\UseCase\EditProfile;
 
-class Command
+final class Command
 {
     private $vatNumber;
     private $name;
