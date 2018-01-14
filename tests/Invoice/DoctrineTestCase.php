@@ -6,8 +6,9 @@ namespace Tests\Invoice;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
-use PDO;
+use Invoice\Adapter\Doctrine\Domain\User;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineTestCase extends TestCase
@@ -16,10 +17,6 @@ class DoctrineTestCase extends TestCase
      * @var EntityManagerInterface
      */
     protected $em;
-    /**
-     * @var PDO
-     */
-    protected $pdo;
 
     public function setUp()
     {
@@ -44,14 +41,11 @@ class DoctrineTestCase extends TestCase
         $config = Setup::createYAMLMetadataConfiguration($paths, $isDevMode);
         $this->em = EntityManager::create($dbParams, $config);
 
-        if (!$this->pdo) {
-            $this->pdo = new PDO(
-                getenv('POSTGRES_DSN'),
-                getenv('POSTGRES_USER'),
-                getenv('POSTGRES_PASSWORD')
-            );
-        }
-
-        $this->pdo->exec('DELETE FROM users');
+        $tool = new SchemaTool($this->em);
+        $classes = [
+            $this->em->getClassMetadata(User::class)
+        ];
+        $tool->dropSchema($classes);
+        $tool->createSchema($classes);
     }
 }
