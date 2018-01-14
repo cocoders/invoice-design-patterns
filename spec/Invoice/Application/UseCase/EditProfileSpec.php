@@ -54,7 +54,7 @@ class EditProfileSpec extends ObjectBehavior
         EditProfile\Responder $responder
     ) {
         $vatNumber = VatNumber::fromString('234');
-        $vatNumberFactory->create('234')->willREturn($vatNumber);
+        $vatNumberFactory->create('234')->willReturn($vatNumber);
         $transactionManager->begin()->shouldBeCalled();
         $users->get(new Email('leszek.prabucki@gmail.com'))->willThrow(new UserNotFound());
         $transactionManager->rollback()->shouldBeCalled();
@@ -80,7 +80,7 @@ class EditProfileSpec extends ObjectBehavior
         EditProfile\Responder $responder
     ) {
         $vatNumber = VatNumber::fromString('234');
-        $vatNumberFactory->create('234')->willREturn($vatNumber);
+        $vatNumberFactory->create('234')->willReturn($vatNumber);
         $transactionManager->begin()->shouldBeCalled();
         $users->get(new Email('leszek.prabucki@gmail.com'))->willReturn($user);
         $user->changeProfile(new User\Profile(
