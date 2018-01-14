@@ -38,7 +38,7 @@ class RegisterUserTest extends DoctrineTestCase
             password_hash('ktoIdziePoPiwo', PASSWORD_BCRYPT)
         ));
 
-        $users = $this->pdo->query('SELECT * FROM users')->fetchAll();
+        $users = $this->em->getConnection()->query('SELECT * FROM users')->fetchAll();
 
         self::assertCount(1, $users);
         self::assertEquals('leszek.prabucki@gmail.com', $users[0]['email']);
@@ -55,7 +55,7 @@ class RegisterUserTest extends DoctrineTestCase
             password_hash('ktoIdziePoPiwo', PASSWORD_BCRYPT)
         ));
 
-        $users = $this->pdo->query('SELECT * FROM users')->fetchAll();
+        $users = $this->em->getConnection()->query('SELECT * FROM users')->fetchAll();
 
         self::assertCount(1, $users);
         self::assertEquals('leszek.prabucki@gmail.com', $users[0]['email']);
