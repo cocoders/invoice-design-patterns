@@ -7,7 +7,7 @@ namespace Invoice\Adapter\Doctrine\Application;
 use Doctrine\ORM\EntityManagerInterface;
 use Invoice\Application\TransactionManager as TransactionManagerInterface;
 
-class TransactionManager implements TransactionManagerInterface
+final class TransactionManager implements TransactionManagerInterface
 {
     /**
      * @var EntityManagerInterface
