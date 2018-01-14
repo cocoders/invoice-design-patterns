@@ -30,11 +30,13 @@ class TransactionManager implements TransactionManagerInterface
         foreach ($this->unitOfWork->objects() as $object) {
             if ($object instanceof User && $object->id()) {
                 $stmt = $this->pdo->prepare(
-                    'UPDATE users SET email = :email, password_hash = :password WHERE id = :id'
+                    'UPDATE users SET email = :email, vat = :vat, address = :address, name = :name WHERE id = :id'
                 );
                 $stmt->execute([
                     'email' => (string) $object->email(),
-                    'password_hash' => $object->passwordHash(),
+                    'vat' => $object->hasProfile() ? $object->profile()->vatNumber() : '',
+                    'address' => $object->hasProfile() ? $object->profile()->address() : '',
+                    'name' => $object->hasProfile() ? $object->profile()->name() : '',
                     'id' => $object->id()
                 ]);
             }

@@ -6,6 +6,7 @@ namespace Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Domain\Email;
 use Invoice\Domain\User as BaseUser;
+use Invoice\Domain\VatNumber;
 
 final class User extends BaseUser
 {
@@ -16,10 +17,24 @@ final class User extends BaseUser
         parent::__construct($email, $passwordHash);
     }
 
-    public static function fromDatabase(Email $email, string $passwordHash, int $id): User
-    {
-        $user = new User($email, $passwordHash);
+    public static function fromDatabase(
+        int $id,
+        string $email,
+        string $passwordHash,
+        string $vat,
+        string $name,
+        string $address
+    ): User {
+        $user = new User(new Email($email), $passwordHash);
         $user->id = $id;
+
+        if ($vat || $name || $address) {
+            $user->changeProfile(new BaseUser\Profile(
+                VatNumber::fromString($vat),
+                $name,
+                $address
+            ));
+        }
 
         return $user;
     }

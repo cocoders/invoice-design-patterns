@@ -61,4 +61,9 @@ $registerUser = new \Invoice\Application\UseCase\RegisterUser(
     $users,
     new \Invoice\Adapter\Pdo\Domain\UserFactory()
 );
+$editProfile = new \Invoice\Application\UseCase\EditProfile(
+    $transactionManager,
+    $users,
+    new \Invoice\Adapter\Legacy\Domain\VatNumberFactory()
+);
 

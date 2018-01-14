@@ -6,12 +6,10 @@ use Exception;
 use InvalidArgumentException;
 use Invoice\Application\UseCase\RegisterUser;
 use Invoice\Application\TransactionManager;
-use Invoice\Domain\Email;
 use Invoice\Domain\Users;
 use Invoice\Domain\UserFactory;
 use Invoice\Domain\User;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 /**
  * @mixin RegisterUser

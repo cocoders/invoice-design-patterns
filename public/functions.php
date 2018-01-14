@@ -2,6 +2,7 @@
 
 use Invoice\Adapter\Legacy\Application\Errors;
 use Invoice\Adapter\Legacy\Application\UseCase\RegisterUser\Responder as RegisterUserResponder;
+use Invoice\Application\UseCase\EditProfile;
 use Invoice\Application\UseCase\RegisterUser;
 
 $loginErrors = new Errors();
@@ -204,15 +205,16 @@ function editInvoice($invoiceId)
 
 function editProfile()
 {
-    global $connection;
+    global $editProfile;
 
-    $stmt = $connection->prepare('UPDATE users SET name = :name, vat = :vat, address = :address WHERE id = :user_id');
-    $stmt->execute([
-        'vat' => $_POST['vat'],
-        'address' => $_POST['address'],
-        'name' => $_POST['name'],
-        'user_id' => $_SESSION['loggedInUser']['id']
-    ]);
+    $editProfile->execute(
+        new EditProfile\Command(
+            (string) $_SESSION['loggedInUser']['email'],
+            (string) $_POST['vat'],
+            (string) $_POST['name'],
+            (string) $_POST['address']
+        )
+    );
 
     header('Location: /index.php?page=user-profile&successMessage="Profile data updated successfully"');
     exit;

@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Invoice\Adapter\Pdo\Domain;
 
 use Invoice\Adapter\Pdo\UnitOfWork;
+use Invoice\Domain\Email;
+use Invoice\Domain\Exception\UserNotFound;
 use Invoice\Domain\User as BaseUser;
 use Invoice\Domain\Users as UsersInterface;
+use Invoice\Domain\VatNumber;
 use PDO;
 
 final class Users implements UsersInterface
@@ -49,5 +52,32 @@ final class Users implements UsersInterface
         $stmt->execute(['email' => $user->email()]);
 
         return (bool) $stmt->fetchColumn();
+    }
+
+    /**
+     * @throws UserNotFound
+     */
+    public function get(Email $email): BaseUser
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = :email');
+        $stmt->execute(['email' => (string) $email]);
+
+        $result = $stmt->fetch();
+
+        if (!$result) {
+            throw new UserNotFound();
+        }
+
+        $user = User::fromDatabase(
+            (int) $result['id'],
+            (string) $result['email'],
+            (string) $result['password_hash'],
+            (string) $result['vat'],
+            (string) $result['name'],
+            (string) $result['address']
+        );
+        $this->unitOfWork->attach($user);
+
+        return $user;
     }
 }
