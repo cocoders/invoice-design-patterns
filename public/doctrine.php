@@ -24,5 +24,5 @@ $dbParams = array(
     'host'   => $config['db_host'] ?? 'postgres',
 );
 
-$config = Setup::createYAMLMetadataConfiguration($paths, $isDevMode);
-$entityManager = EntityManager::create($dbParams, $config);
+$doctrineConfig = Setup::createYAMLMetadataConfiguration($paths, $isDevMode);
+$entityManager = EntityManager::create($dbParams, $doctrineConfig);

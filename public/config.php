@@ -57,11 +57,7 @@ try {
     die ('Cannot connect to database: ' . $exception->getMessage());
 }
 
-$users = new \Invoice\Adapter\Doctrine\Domain\Users(
-    new \Invoice\Adapter\Doctrine\Domain\UserFactory(),
-    $entityManager,
-    $entityManager->getClassMetadata(\Invoice\Adapter\Doctrine\Domain\User::class)
-);
+$users = new \Invoice\Adapter\Doctrine\Domain\Users($entityManager);
 $transactionManager = new \Invoice\Adapter\Doctrine\Application\TransactionManager($entityManager);
 $registerUser = new \Invoice\Application\UseCase\RegisterUser(
     $transactionManager,
