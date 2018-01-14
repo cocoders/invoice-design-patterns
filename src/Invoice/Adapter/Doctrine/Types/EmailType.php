@@ -24,17 +24,13 @@ class EmailType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): Email
     {
-        if ($value === null) {
-            return $value;
-        }
-
         return new Email($value);
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
     {
-        if (null === $value) {
-            return null;
+        if ($value === null) {
+            return '';
         }
 
         return (string) $value;
