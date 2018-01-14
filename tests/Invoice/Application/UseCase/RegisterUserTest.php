@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Invoice\Application\UseCase;
 
-use Invoice\Adapter\Pdo\Application\TransactionManager;
-use Invoice\Adapter\Pdo\Domain\UserFactory;
-use Invoice\Adapter\Pdo\Domain\Users;
-use Invoice\Adapter\Pdo\UnitOfWork;
+use Invoice\Adapter\Doctrine\Application\TransactionManager;
+use Invoice\Adapter\Doctrine\Domain\User;
+use Invoice\Adapter\Doctrine\Domain\UserFactory;
+use Invoice\Adapter\Doctrine\Domain\Users;
 use Invoice\Application\UseCase\RegisterUser;
-use Tests\Invoice\DbTestCase;
+use Tests\Invoice\DoctrineTestCase;
 
 /**
  * @integration
  */
-class RegisterUserTest extends DbTestCase
+class RegisterUserTest extends DoctrineTestCase
 {
     /**
      * @var RegisterUser
@@ -24,10 +24,9 @@ class RegisterUserTest extends DbTestCase
     public function setUp()
     {
         parent::setUp();
-        $unitOfWork = new UnitOfWork();
         $this->registerUser = new RegisterUser(
-            new TransactionManager($this->pdo, $unitOfWork),
-            new Users($this->pdo, $unitOfWork),
+            new TransactionManager($this->em),
+            new Users($this->em, $this->em->getClassMetadata(User::class)),
             new UserFactory()
         );
     }
@@ -39,7 +38,7 @@ class RegisterUserTest extends DbTestCase
             password_hash('ktoIdziePoPiwo', PASSWORD_BCRYPT)
         ));
 
-        $users = $this->pdo->query('SELECT * FROM users')->fetchAll();
+        $users = $this->em->getConnection()->query('SELECT * FROM users')->fetchAll();
 
         self::assertCount(1, $users);
         self::assertEquals('leszek.prabucki@gmail.com', $users[0]['email']);
@@ -56,7 +55,7 @@ class RegisterUserTest extends DbTestCase
             password_hash('ktoIdziePoPiwo', PASSWORD_BCRYPT)
         ));
 
-        $users = $this->pdo->query('SELECT * FROM users')->fetchAll();
+        $users = $this->em->getConnection()->query('SELECT * FROM users')->fetchAll();
 
         self::assertCount(1, $users);
         self::assertEquals('leszek.prabucki@gmail.com', $users[0]['email']);

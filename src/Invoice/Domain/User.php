@@ -9,13 +9,13 @@ use Invoice\Domain\User\Profile;
 
 class User
 {
-    private $email;
-    private $passwordHash;
+    protected $email;
+    protected $passwordHash;
 
     /**
      * @var Profile|null
      */
-    private $profile;
+    protected $profile;
 
     public function __construct(Email $email, string $passwordHash)
     {
