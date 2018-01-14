@@ -129,7 +129,7 @@ class RegisterUserSpec extends ObjectBehavior
         ));
     }
 
-    function it_notify_responser_if_user_which_such_email_already_exists(
+    function it_notify_responder_if_user_which_such_email_already_exists(
         TransactionManager $transactionManager,
         UserFactory $userFactory,
         User $user,
@@ -152,7 +152,7 @@ class RegisterUserSpec extends ObjectBehavior
         ));
     }
 
-    function it_notify_responser_if_username_is_empty(
+    function it_notify_responder_if_username_is_empty(
         RegisterUser\Responder $responder
     ) {
         $responder->emailIsEmpty()->shouldBeCalled();
