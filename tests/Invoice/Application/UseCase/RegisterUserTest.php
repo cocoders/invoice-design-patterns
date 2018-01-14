@@ -8,7 +8,6 @@ use Invoice\Adapter\Doctrine\Application\TransactionManager;
 use Invoice\Adapter\Doctrine\Domain\User;
 use Invoice\Adapter\Doctrine\Domain\UserFactory;
 use Invoice\Adapter\Doctrine\Domain\Users;
-use Invoice\Adapter\Doctrine\UnitOfWork;
 use Invoice\Application\UseCase\RegisterUser;
 use Tests\Invoice\DoctrineTestCase;
 
@@ -27,7 +26,7 @@ class RegisterUserTest extends DoctrineTestCase
         parent::setUp();
         $this->registerUser = new RegisterUser(
             new TransactionManager($this->em),
-            new Users(new UserFactory(), $this->em, $this->em->getClassMetadata(User::class)),
+            new Users($this->em, $this->em->getClassMetadata(User::class)),
             new UserFactory()
         );
     }
