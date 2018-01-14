@@ -2,7 +2,6 @@
 <?php include './doctrine.php' ?>
 <?php
 
-
 $pages = [
     'dashboard' => [
         'icon' => 'fa-dashboard',
@@ -36,16 +35,16 @@ $pages = [
     ]
 ];
 
-
-
-
-//$unitOfWork = new \Invoice\Adapter\Pdo\UnitOfWork();
-//$users = new \Invoice\Adapter\Pdo\Domain\Users($connection, $unitOfWork);
-//$transactionManager = new \Invoice\Adapter\Pdo\Application\TransactionManager($connection, $unitOfWork);
+$users = new \Invoice\Adapter\Doctrine\Domain\Users(
+    new \Invoice\Adapter\Doctrine\Domain\UserFactory(),
+    $entityManager,
+    $entityManager->getClassMetadata(\Invoice\Adapter\Doctrine\Domain\User::class)
+);
+$transactionManager = new \Invoice\Adapter\Doctrine\Application\TransactionManager($entityManager);
 $registerUser = new \Invoice\Application\UseCase\RegisterUser(
     $transactionManager,
     $users,
-    new \Invoice\Adapter\Pdo\Domain\UserFactory()
+    new \Invoice\Adapter\Doctrine\Domain\UserFactory()
 );
 $editProfile = new \Invoice\Application\UseCase\EditProfile(
     $transactionManager,
