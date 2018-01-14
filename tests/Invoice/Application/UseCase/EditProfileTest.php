@@ -62,7 +62,7 @@ class EditProfileTest extends DoctrineTestCase
             'address 2'
         ));
 
-        $users = $this->pdo->query('SELECT * FROM users')->fetchAll();
+        $users = $this->em->getConnection()->query('SELECT * FROM users')->fetchAll();
 
         self::assertCount(1, $users);
         self::assertEquals('2134', $users[0]['vat']);

@@ -8,14 +8,14 @@ Invoice\Adapter\Doctrine\Domain\User:
       generator:
         strategy: AUTO
   fields:
+    email:
+      type: email
+      nullable: false
     passwordHash:
       type: string
       column: password_hash
       nullable: false
   embedded:
-    email:
-      class: Invoice\Domain\Email
-      columnPrefix: false
     profile:
       class: Invoice\Domain\User\Profile
       columnPrefix: false
