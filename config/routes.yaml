@@ -1,0 +1,3 @@
+edit_profile:
+    path: /edit-profile
+    controller: App\Controller\UserController::editProfile

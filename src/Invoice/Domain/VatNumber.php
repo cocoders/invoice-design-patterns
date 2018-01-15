@@ -53,6 +53,6 @@ final class VatNumber
 
     public function __toString(): string
     {
-        return $this->number;
+        return (string) $this->number;
     }
 }

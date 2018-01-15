@@ -26,11 +26,11 @@ final class Profile
 
     public function name(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     public function address(): string
     {
-        return $this->address;
+        return (string) $this->address;
     }
 }

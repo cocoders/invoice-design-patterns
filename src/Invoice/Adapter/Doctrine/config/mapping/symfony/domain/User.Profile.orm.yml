@@ -1,0 +1,13 @@
+Invoice\Domain\User\Profile:
+  type: embeddable
+  fields:
+    name:
+      type: string
+      nullable: true
+    address:
+      type: string
+      nullable: true
+  embedded:
+    vatNumber:
+      class: Invoice\Domain\VatNumber
+      columnPrefix: false

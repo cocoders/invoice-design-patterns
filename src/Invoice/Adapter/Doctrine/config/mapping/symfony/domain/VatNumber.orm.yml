@@ -1,0 +1,7 @@
+Invoice\Domain\VatNumber:
+  type: embeddable
+  fields:
+    number:
+      type: string
+      nullable: true
+      column: vat
